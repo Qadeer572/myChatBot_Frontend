@@ -1,6 +1,6 @@
 "use client";
 
-
+import Head from "next/head";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -72,6 +72,10 @@ export default function LoginPage() {
   }
 
   return (
+    <div>
+      <Head>
+        <title>Login - ChatLink</title>
+      </Head>
     <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-8 bg-white p-8 rounded-2xl shadow-lg">
         <div className="space-y-2 text-center">
@@ -123,6 +127,7 @@ export default function LoginPage() {
           </p>
         </div>
       </div>
+    </div>
     </div>
   );
 }

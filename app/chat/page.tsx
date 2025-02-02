@@ -4,6 +4,7 @@ import { Send, Bot, User, Loader2 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
+import Head from "next/head";
 
 interface Message {
   id: number;
@@ -71,6 +72,10 @@ export default function Home() {
   };
 
   return (
+    <div>
+      <Head>
+        <title>AI Assistant - ChatLink</title>
+      </Head>
     <div className="flex min-h-screen bg-gray-900 text-white p-4 md:p-6 relative">
       <div className="flex flex-col w-full max-w-4xl mx-auto bg-gray-800 rounded-2xl shadow-2xl overflow-hidden border border-gray-700 relative pb-20">
         {/* Chat Header */}
@@ -159,6 +164,7 @@ export default function Home() {
           </div>
         </form>
       </div>
+    </div>
     </div>
   );
 }

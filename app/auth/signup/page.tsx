@@ -7,6 +7,7 @@ import * as z from "zod";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation"; // Change import from 'next/router' to 'next/navigation'
+import Head from "next/head";
 
 import {
   Form,
@@ -81,6 +82,10 @@ export default function SignUpPage() {
   }
 
   return (
+    <div>
+      <head>
+        <title>Sign Up - ChatLink</title>
+      </head>
     <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-8 bg-white p-8 rounded-2xl shadow-lg">
         <div className="space-y-2 text-center">
@@ -161,6 +166,7 @@ export default function SignUpPage() {
           </p>
         </div>
       </div>
+    </div>
     </div>
   );
 }
