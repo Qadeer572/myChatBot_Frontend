@@ -73,9 +73,9 @@ export default function Home() {
 
   return (
     <div>
-      <Head>
+      <head>
         <title>AI Assistant - ChatLink</title>
-      </Head>
+      </head>
     <div className="flex min-h-screen bg-gray-900 text-white p-4 md:p-6 relative">
       <div className="flex flex-col w-full max-w-4xl mx-auto bg-gray-800 rounded-2xl shadow-2xl overflow-hidden border border-gray-700 relative pb-20">
         {/* Chat Header */}

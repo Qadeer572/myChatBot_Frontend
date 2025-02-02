@@ -73,9 +73,9 @@ export default function LoginPage() {
 
   return (
     <div>
-      <Head>
+      <head>
         <title>Login - ChatLink</title>
-      </Head>
+      </head>
     <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-8 bg-white p-8 rounded-2xl shadow-lg">
         <div className="space-y-2 text-center">
