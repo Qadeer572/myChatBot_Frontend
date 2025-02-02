@@ -1,8 +1,14 @@
 import Link from "next/link";
+import Head from "next/head";
 import { Button } from "@/components/ui/button";
 
 export default function Home() {
   return (
+    <div>
+      <head>
+        <title>ChatLink</title>
+        
+      </head>
     <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-900 dark:to-slate-800 flex flex-col items-center justify-center p-4 dark:text-white">
       <div className="text-center space-y-6">
         <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
@@ -20,6 +26,7 @@ export default function Home() {
           </Button>
         </div>
       </div>
+    </div>
     </div>
   );
 }
