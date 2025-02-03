@@ -1,3 +1,5 @@
+"use client";
+
 import { Send, Bot, User, Loader2 } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -72,6 +74,31 @@ export default function Home() {
       console.error("Error fetching bot response:", error);
     }
 
+    try {
+      const response = await fetch("http://127.0.0.1:8000/chat/history/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: user_email }),
+      });
+
+      const data = await response.json();
+      const history = data.history;
+      console.log(history);
+
+      // Prepend the history messages before the new ones
+      const historyMessages = history.map((msg: string, index: number) => ({
+        id: index + 1,
+        text: msg,
+        isBot: false,
+      }));
+
+      setMessages((prev) => [...historyMessages, ...prev]); // Display history first
+    } catch (error) {
+      console.error("Error fetching History:", error);
+    }
+
     setIsTyping(false);
   };
 
@@ -81,8 +108,27 @@ export default function Home() {
         <title>AI Assistant - ChatLink</title>
       </Head>
       <div className="flex min-h-screen bg-gray-900 text-white p-4 md:p-6 relative">
-        <div className="flex flex-col w-full max-w-4xl mx-auto bg-gray-800 rounded-2xl shadow-2xl overflow-hidden border border-gray-700 relative pb-20">
-          {/* Chat Header */}
+        {/* Sidebar */}
+        <div className="w-64 bg-gray-800 p-6 rounded-2xl shadow-2xl border border-gray-700">
+          <div className="flex flex-col space-y-4">
+            <h2 className="text-xl font-semibold">Chat History</h2>
+            <div className="space-y-2 max-h-[calc(100vh-200px)] overflow-y-auto">
+              {messages.filter((message) => message.isBot).map((message) => (
+                <div key={message.id} className="flex items-start space-x-2 max-w-[80%]">
+                  <div className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center">
+                    <Bot className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="p-4 rounded-2xl bg-gray-700 text-white shadow-sm">
+                    <ReactMarkdown className="text-sm leading-relaxed">{message.text}</ReactMarkdown>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Main Chat Area */}
+        <div className="flex flex-col w-full max-w-4xl mx-auto bg-gray-800 rounded-2xl shadow-2xl overflow-hidden border border-gray-700 relative pb-20 ml-72">
           <div className="p-6 bg-gray-700 text-gray-100">
             <div className="flex items-center space-x-3">
               <Bot className="w-8 h-8 text-white" />
@@ -93,34 +139,10 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Bot History (Outside the Chatbox) */}
-          <div className="flex flex-col space-y-6 px-6 py-4 bg-gray-700 border-b border-gray-600">
-            <h2 className="text-lg font-bold text-white">Chat History</h2>
-            <div className="space-y-2">
-              {messages.filter((message) => message.isBot).map((message) => (
-                <motion.div
-                  key={message.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                  className="flex items-start space-x-2 max-w-[80%]"
-                >
-                  <div className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center flex-shrink-0">
-                    <Bot className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="p-4 rounded-2xl bg-gray-700 text-white shadow-sm">
-                    <ReactMarkdown className="text-sm leading-relaxed">{message.text}</ReactMarkdown>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-
-          {/* Chat Messages (Inside the Chatbox) */}
+          {/* Chat Messages */}
           <div className="flex-1 p-6 overflow-y-auto bg-gray-800" style={{ minHeight: "500px" }}>
             <div className="space-y-6">
-              {/* New Messages (User Messages on Right) */}
+              {/* New Messages on Right */}
               <AnimatePresence>
                 {messages.filter((message) => !message.isBot).map((message) => (
                   <motion.div
