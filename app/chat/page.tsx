@@ -13,12 +13,6 @@ interface Message {
   isBot: boolean;
 }
 
-interface ChatHistory {
-  id: number;
-  text: string;
-  timestamp: Date;
-}
-
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -29,13 +23,13 @@ export default function Home() {
   ]);
   const [user_email, setuserEmail] = useState<any[]>([]);
   const [historyLoaded, setHistoryLoaded] = useState(false);
-  const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
+  const [history, setHistory] = useState<string[]>([]);
 
   useEffect(() => {
     const user_Email = localStorage.getItem("user_email");
     if (user_Email) setuserEmail(JSON.parse(user_Email));
 
-    // Fetch chat history when component mounts
+    // Fetch initial history
     const fetchHistory = async () => {
       try {
         const response = await fetch("http://127.0.0.1:8000/chat/history/", {
@@ -47,15 +41,7 @@ export default function Home() {
         });
 
         const data = await response.json();
-        const history = data.history;
-
-        const historyItems = history.map((msg: string, index: number) => ({
-          id: index + 1,
-          text: msg,
-          timestamp: new Date(),
-        }));
-
-        setChatHistory(historyItems);
+        setHistory(data.history || []);
         setHistoryLoaded(true);
       } catch (error) {
         console.error("Error fetching initial history:", error);
@@ -110,17 +96,9 @@ export default function Home() {
         isBot: true,
       };
       setMessages((prev) => [...prev, botResponse]);
-
-      // Add to history
-      setChatHistory(prev => [...prev, {
-        id: prev.length + 1,
-        text: inputMessage,
-        timestamp: new Date()
-      }]);
     } catch (error) {
       console.error("Error fetching bot response:", error);
     }
-
     try {
       const response = await fetch("http://127.0.0.1:8000/chat/history/", {
         method: "POST",
@@ -131,19 +109,11 @@ export default function Home() {
       });
 
       const data = await response.json();
-      const history = data.history;
-
-      const historyMessages = history.map((msg: string, index: number) => ({
-        id: index + 1,
-        text: msg,
-        timestamp: new Date()
-      }));
-
-      setChatHistory(historyMessages);
+      setHistory(data.history || []);
     } catch (error) {
       console.error("Error fetching History:", error);
     }
-
+ 
     setIsTyping(false);
   };
 
@@ -162,15 +132,12 @@ export default function Home() {
           
           <ScrollArea className="flex-1 -mx-2">
             <div className="space-y-2 pr-4">
-              {chatHistory.map((historyItem) => (
+              {history.map((msg, index) => (
                 <div
-                  key={historyItem.id}
+                  key={index}
                   className="p-4 rounded-lg bg-gray-700/50 hover:bg-gray-700 transition-colors duration-200"
                 >
-                  <p className="text-sm text-gray-300 mb-1">
-                    {new Date(historyItem.timestamp).toLocaleString()}
-                  </p>
-                  <p className="text-sm line-clamp-2">{historyItem.text}</p>
+                  <p className="text-sm line-clamp-2">{msg}</p>
                 </div>
               ))}
             </div>
