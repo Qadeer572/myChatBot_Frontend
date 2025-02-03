@@ -136,7 +136,7 @@ export default function Home() {
           </ScrollArea>
         </div>
 
-        <div className={`flex-1 flex flex-col transition-all duration-300 ${isSidebarVisible ? "ml-80" : "ml-0"}`}>
+        <div className={`flex-1 flex flex-col transition-all duration-300 ${isSidebarVisible ? "ml-80" : "ml-auto mr-auto max-w-4xl"}`}>
           <div className="p-6 bg-gray-700 text-gray-100 fixed top-0 left-0 right-0 z-10 flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <button onClick={() => setIsSidebarVisible(!isSidebarVisible)}>
