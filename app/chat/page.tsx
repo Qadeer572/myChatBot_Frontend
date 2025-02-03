@@ -4,7 +4,6 @@ import { Send, Bot, User, Loader2, Menu } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
-import Head from "next/head";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface Message {
@@ -22,8 +21,10 @@ export default function Home() {
     },
   ]);
   const [user_email, setUserEmail] = useState<string | null>(null);
-  const [historyMessages, setHistoryMessages] = useState<Message[]>([]);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
+  const [inputMessage, setInputMessage] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const storedEmail = localStorage.getItem("user_email");
@@ -35,10 +36,6 @@ export default function Home() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
-
-  const [inputMessage, setInputMessage] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -58,45 +55,53 @@ export default function Home() {
     setInputMessage("");
     setIsTyping(true);
 
-    try {
-      const response = await fetch("http://127.0.0.1:8000/chat/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email: user_email, message: inputMessage }),
-      });
+    setTimeout(async () => {
+      try {
+        const response = await fetch("http://127.0.0.1:8000/chat/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email: user_email, message: inputMessage }),
+        });
 
-      if (!response.ok) {
-        throw new Error(`Error fetching bot response: ${response.statusText}`);
+        if (!response.ok) {
+          throw new Error(`Error fetching bot response: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        const botResponse: Message = {
+          id: messages.length + 2,
+          text: data.chatResponse || "I couldn't process your request.",
+          isBot: true,
+        };
+        setMessages((prev) => [...prev, botResponse]);
+      } catch (error) {
+        console.error("Error:", error);
       }
-
-      const data = await response.json();
-      const botResponse: Message = {
-        id: messages.length + 2,
-        text: data.chatResponse || "I couldn't process your request.",
-        isBot: true,
-      };
-      setMessages((prev) => [...prev, botResponse]);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-
-    setIsTyping(false);
+      setIsTyping(false);
+    }, 2000);
   };
 
   return (
     <div className="flex h-screen bg-gray-900 text-white">
       {/* Sidebar */}
-      <div className={`w-64 bg-gray-800 p-4 flex flex-col ${isSidebarVisible ? "block" : "hidden"}`}>
+      <motion.div
+        initial={{ x: -200 }}
+        animate={{ x: isSidebarVisible ? 0 : -200 }}
+        transition={{ duration: 0.3 }}
+        className={`w-64 bg-gray-800 p-4 flex flex-col ${isSidebarVisible ? "block" : "hidden"}`}
+      >
         <h2 className="text-xl font-bold mb-4">Chat History</h2>
         <ScrollArea className="flex-1 overflow-y-auto">
           {/* Chat history messages */}
         </ScrollArea>
-      </div>
+      </motion.div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col">
+      <div
+        className={`flex-1 flex flex-col transition-all duration-300 ${isSidebarVisible ? "ml-64" : "ml-0 mx-auto max-w-2xl"}`}
+      >
         <div className="p-4 bg-gray-700 flex items-center justify-between">
           <button onClick={() => setIsSidebarVisible(!isSidebarVisible)}>
             <Menu className="w-6 h-6 text-white" />
@@ -122,20 +127,28 @@ export default function Home() {
               ))}
             </AnimatePresence>
             {isTyping && (
-              <div className="text-sm text-gray-400">AI is typing...</div>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ repeat: Infinity, duration: 0.8 }}
+                className="flex items-center space-x-2"
+              >
+                <Loader2 className="w-5 h-5 animate-spin text-blue-500" />
+                <span className="text-sm text-gray-400">AI is typing...</span>
+              </motion.div>
             )}
           </div>
           <div ref={messagesEndRef} />
         </div>
 
         {/* Input Area */}
-        <div className="p-4 bg-gray-800 flex items-center">
+        <div className="p-4 bg-gray-800 flex items-center justify-center">
           <input
             type="text"
             value={inputMessage}
             onChange={(e) => setInputMessage(e.target.value)}
             placeholder="Type a message..."
-            className="flex-1 p-2 rounded bg-gray-700 border border-gray-600 text-white"
+            className="flex-1 p-2 rounded bg-gray-700 border border-gray-600 text-white max-w-2xl"
           />
           <button
             onClick={handleSendMessage}
