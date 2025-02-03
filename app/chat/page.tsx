@@ -157,7 +157,7 @@ export default function Home() {
 
         {/* Main Chat Area */}
         <div className="flex-1 flex flex-col ml-80">
-          <div className="p-6 bg-gray-700 text-gray-100">
+          <div className="p-6 bg-gray-700 text-gray-100 fixed top-0 left-80 right-0 z-10">
             <div className="flex items-center space-x-3">
               <Bot className="w-8 h-8 text-white" />
               <div>
@@ -168,7 +168,7 @@ export default function Home() {
           </div>
 
           {/* Chat Messages */}
-          <div className="flex-1 p-6 overflow-y-auto bg-gray-800" style={{ minHeight: "500px" }}>
+          <div className="flex-1 p-6 overflow-y-auto bg-gray-800 mt-20" style={{ minHeight: "500px" }}>
             <div className="space-y-6">
               <AnimatePresence>
                 {messages.map((message) => (
@@ -224,7 +224,7 @@ export default function Home() {
           </div>
 
           {/* Message Input */}
-          <div className="p-4 bg-gray-800 border-t border-gray-700">
+          <div className="p-4 bg-gray-800 border-t border-gray-700 fixed bottom-0 left-80 right-0 z-10">
             <form onSubmit={handleSendMessage} className="flex space-x-4">
               <input
                 type="text"
