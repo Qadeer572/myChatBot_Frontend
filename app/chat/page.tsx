@@ -26,38 +26,12 @@ export default function Home() {
       isBot: true,
     },
   ]);
-  const [user_email, setuserEmail] = useState<any[]>([]);
+  const [user_email, setUserEmail] = useState<any[]>([]);
   const [historyMessages, setHistoryMessages] = useState<HistoryMessage[]>([]);
 
   useEffect(() => {
     const user_Email = localStorage.getItem("user_email");
-    if (user_Email) setuserEmail(JSON.parse(user_Email));
-
-    // Fetch chat history once when the component mounts
-    const fetchHistory = async () => {
-      try {
-        const response = await fetch("http://127.0.0.1:8000/chat/history/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email: user_Email }),
-        });
-
-        const data = await response.json();
-        const history = data.history;
-        const historyMessages = history.map((msg: string, index: number) => ({
-          id: index + 1,
-          text: msg,
-        }));
-
-        setHistoryMessages(historyMessages);
-      } catch (error) {
-        console.error("Error fetching History:", error);
-      }
-    };
-
-    fetchHistory();
+    if (user_Email) setUserEmail(JSON.parse(user_Email));
   }, []);
 
   const [inputMessage, setInputMessage] = useState("");
@@ -71,6 +45,33 @@ export default function Home() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  const fetchHistory = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:8000/chat/history/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: user_email }),
+      });
+
+      const data = await response.json();
+      const history = data.history;
+      const historyMessages = history.map((msg: string, index: number) => ({
+        id: index + 1,
+        text: msg,
+      }));
+
+      setHistoryMessages(historyMessages);
+    } catch (error) {
+      console.error("Error fetching History:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchHistory();
+  }, [user_email]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -106,6 +107,8 @@ export default function Home() {
     } catch (error) {
       console.error("Error fetching bot response:", error);
     }
+
+    await fetchHistory();
 
     setIsTyping(false);
   };
