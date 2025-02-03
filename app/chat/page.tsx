@@ -22,12 +22,14 @@ export default function Home() {
     },
   ]);
   const [user_email, setuserEmail] = useState<any[]>([]);
-  const [history, setHistory] = useState<string[]>([]);
+  const [historyLoaded, setHistoryLoaded] = useState(false);
 
   useEffect(() => {
     const user_Email = localStorage.getItem("user_email");
     if (user_Email) setuserEmail(JSON.parse(user_Email));
-  }, []);
+
+     
+     
 
   const [inputMessage, setInputMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -81,11 +83,19 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email: user_email }),
+        body: JSON.stringify({ email: user_email}),
       });
 
       const data = await response.json();
-      setHistory(data.history || []);
+      const history=data.history;
+      console.log(history);
+
+      const historyMessages= history.map((msg: string, index: number) => ({
+        id: index + 1,
+        text: msg,
+        isBot: false,
+      }));
+       
     } catch (error) {
       console.error("Error fetching History:", error);
     }
@@ -99,7 +109,7 @@ export default function Home() {
         <title>AI Assistant - ChatLink</title>
       </Head>
       <div className="flex min-h-screen bg-gray-900 text-white">
-        {/* Sidebar with History */}
+        {/* Empty Sidebar */}
         <div className="w-80 bg-gray-800 p-6 flex flex-col h-screen border-r border-gray-700 fixed">
           <div className="flex items-center space-x-3 mb-6">
             <Bot className="w-8 h-8 text-primary" />
@@ -108,14 +118,8 @@ export default function Home() {
           
           <ScrollArea className="flex-1 -mx-2">
             <div className="space-y-2 pr-4">
-              {history.map((msg, index) => (
-                <div
-                  key={index}
-                  className="p-4 rounded-lg bg-gray-700/50 hover:bg-gray-700 transition-colors duration-200"
-                >
-                  <p className="text-sm line-clamp-2">{msg}</p>
-                </div>
-              ))}
+               
+                
             </div>
           </ScrollArea>
         </div>
