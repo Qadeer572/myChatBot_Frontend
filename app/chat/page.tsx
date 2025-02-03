@@ -13,12 +13,6 @@ interface Message {
   isBot: boolean;
 }
 
-interface ChatSession {
-  id: string;
-  timestamp: Date;
-  preview: string;
-}
-
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -28,8 +22,6 @@ export default function Home() {
     },
   ]);
   const [user_email, setuserEmail] = useState<any[]>([]);
-  const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
-  const [activeSession, setActiveSession] = useState<string | null>(null);
 
   useEffect(() => {
     const user_Email = localStorage.getItem("user_email");
@@ -46,19 +38,6 @@ export default function Home() {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
-
-  // Update chat sessions when messages change
-  useEffect(() => {
-    const botMessages = messages.filter(m => m.isBot);
-    if (botMessages.length > 0) {
-      const newSessions = botMessages.map(msg => ({
-        id: msg.id.toString(),
-        timestamp: new Date(),
-        preview: msg.text.substring(0, 50) + (msg.text.length > 50 ? "..." : "")
-      }));
-      setChatSessions(newSessions);
-    }
   }, [messages]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
@@ -128,7 +107,7 @@ export default function Home() {
         <title>AI Assistant - ChatLink</title>
       </Head>
       <div className="flex min-h-screen bg-gray-900 text-white">
-        {/* Enhanced Sidebar */}
+        {/* Empty Sidebar */}
         <div className="w-80 bg-gray-800 p-6 flex flex-col h-screen border-r border-gray-700 fixed">
           <div className="flex items-center space-x-3 mb-6">
             <Bot className="w-8 h-8 text-primary" />
@@ -137,20 +116,7 @@ export default function Home() {
           
           <ScrollArea className="flex-1 -mx-2">
             <div className="space-y-2 pr-4">
-              {chatSessions.map((session) => (
-                <button
-                  key={session.id}
-                  onClick={() => setActiveSession(session.id)}
-                  className={`w-full text-left p-4 rounded-lg transition-all duration-200 hover:bg-gray-700 ${
-                    activeSession === session.id ? 'bg-gray-700 ring-2 ring-primary' : ''
-                  }`}
-                >
-                  <p className="font-medium text-sm text-gray-300">
-                    {new Date(session.timestamp).toLocaleString()}
-                  </p>
-                  <p className="text-sm mt-1 line-clamp-2">{session.preview}</p>
-                </button>
-              ))}
+              {/* Sidebar remains empty */}
             </div>
           </ScrollArea>
         </div>
