@@ -127,14 +127,7 @@ export default function Home() {
 
           <ScrollArea className="flex-1 -mx-2">
             <div className="space-y-2 pr-4">
-              {historyMessages.map((message) => (
-                <div
-                  key={message.id}
-                  className="p-4 rounded-lg bg-gray-700 text-white"
-                >
-                  <p className="text-sm leading-relaxed">{message.text}</p>
-                </div>
-              ))}
+               
             </div>
           </ScrollArea>
         </div>
