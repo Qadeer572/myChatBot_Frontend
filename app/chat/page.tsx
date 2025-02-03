@@ -1,6 +1,6 @@
 "use client";
 
-import { Send, Bot, User, Loader2 } from "lucide-react";
+import { Send, Bot, User, Loader2, Menu } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
@@ -21,41 +21,20 @@ export default function Home() {
       isBot: true,
     },
   ]);
-  const [user_email, setuserEmail] = useState<any[]>([]);
-  const [historyLoaded, setHistoryLoaded] = useState(false);
+  const [user_email, setUserEmail] = useState<string | null>(null);
+  const [historyMessages, setHistoryMessages] = useState<Message[]>([]);
+  const [isSidebarVisible, setIsSidebarVisible] = useState(true);
 
   useEffect(() => {
-    const user_Email = localStorage.getItem("user_email");
-    if (user_Email) setuserEmail(JSON.parse(user_Email));
-
-    // Fetch chat history once when the component mounts
-    const fetchHistory = async () => {
-      try {
-        const response = await fetch("http://127.0.0.1:8000/chat/history/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email: user_Email }),
-        });
-
-        const data = await response.json();
-        const history = data.history;
-        const historyMessages = history.map((msg: string, index: number) => ({
-          id: index + 1,
-          text: msg,
-          isBot: false,
-        }));
-
-        setMessages((prev) => [...prev, ...historyMessages]);
-        setHistoryLoaded(true);
-      } catch (error) {
-        console.error("Error fetching History:", error);
-      }
-    };
-
-    fetchHistory();
+    const storedEmail = localStorage.getItem("user_email");
+    if (storedEmail) {
+      setUserEmail(JSON.parse(storedEmail));
+    }
   }, []);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const [inputMessage, setInputMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -65,13 +44,9 @@ export default function Home() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inputMessage.trim()) return;
+    if (!inputMessage.trim() || !user_email) return;
 
     const newMessage: Message = {
       id: messages.length + 1,
@@ -92,6 +67,10 @@ export default function Home() {
         body: JSON.stringify({ email: user_email, message: inputMessage }),
       });
 
+      if (!response.ok) {
+        throw new Error(`Error fetching bot response: ${response.statusText}`);
+      }
+
       const data = await response.json();
 
       const botResponse: Message = {
@@ -100,32 +79,34 @@ export default function Home() {
         isBot: true,
       };
       setMessages((prev) => [...prev, botResponse]);
-    } catch (error) {
-      console.error("Error fetching bot response:", error);
-    }
-    try {
-      const response = await fetch("http://127.0.0.1:8000/chat/history/", {
+
+      // Fetch history and update sidebar
+      const historyResponse = await fetch("http://127.0.0.1:8000/chat/history/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email: user_email}),
+        body: JSON.stringify({ email: user_email }),
       });
 
-      const data = await response.json();
-      const history=data.history;
-      console.log(history);
+      if (!historyResponse.ok) {
+        throw new Error(`Error fetching history: ${historyResponse.statusText}`);
+      }
 
-      const historyMessages= history.map((msg: string, index: number) => ({
+      const historyData = await historyResponse.json();
+      const history = historyData.history;
+      const historyMessages = history.map((msg: string, index: number) => ({
         id: index + 1,
         text: msg,
-        isBot: false,
+        isBot: false, // Assuming history messages are not from the bot
       }));
-       
+
+      setHistoryMessages(historyMessages);
+
     } catch (error) {
-      console.error("Error fetching History:", error);
+      console.error("Error:", error);
     }
- 
+
     setIsTyping(false);
   };
 
@@ -135,25 +116,32 @@ export default function Home() {
         <title>AI Assistant - ChatLink</title>
       </Head>
       <div className="flex min-h-screen bg-gray-900 text-white">
-        {/* Empty Sidebar */}
-        <div className="w-80 bg-gray-800 p-6 flex flex-col h-screen border-r border-gray-700 fixed">
+        <div className={`w-80 bg-gray-800 p-6 flex flex-col h-screen border-r border-gray-700 fixed transition-transform duration-300 ${isSidebarVisible ? "translate-x-0" : "-translate-x-full"}`}>
           <div className="flex items-center space-x-3 mb-6">
             <Bot className="w-8 h-8 text-primary" />
             <h2 className="text-xl font-bold">Chat History</h2>
           </div>
-          
+
           <ScrollArea className="flex-1 -mx-2">
             <div className="space-y-2 pr-4">
-               
-                
+              {historyMessages.map((message) => (
+                <div
+                  key={message.id}
+                  className="p-4 rounded-lg bg-gray-700 text-white"
+                >
+                  <p className="text-sm leading-relaxed">{message.text}</p>
+                </div>
+              ))}
             </div>
           </ScrollArea>
         </div>
 
-        {/* Main Chat Area */}
-        <div className="flex-1 flex flex-col ml-80">
-          <div className="p-6 bg-gray-700 text-gray-100 fixed top-0 left-80 right-0 z-10">
+        <div className={`flex-1 flex flex-col transition-all duration-300 ${isSidebarVisible ? "ml-80" : "ml-0"}`}>
+          <div className="p-6 bg-gray-700 text-gray-100 fixed top-0 left-0 right-0 z-10 flex items-center justify-between">
             <div className="flex items-center space-x-3">
+              <button onClick={() => setIsSidebarVisible(!isSidebarVisible)}>
+                <Menu className="w-8 h-8 text-white" />
+              </button>
               <Bot className="w-8 h-8 text-white" />
               <div>
                 <h1 className="text-2xl font-bold">AI Assistant</h1>
@@ -162,7 +150,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Chat Messages */}
           <div className="flex-1 p-6 overflow-y-auto bg-gray-800 mt-20" style={{ minHeight: "500px" }}>
             <div className="space-y-6">
               <AnimatePresence>
@@ -218,8 +205,7 @@ export default function Home() {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Message Input */}
-          <div className="p-4 bg-gray-800 border-t border-gray-700 fixed bottom-0 left-80 right-0 z-10">
+          <div className="p-4 bg-gray-800 border-t border-gray-700 fixed bottom-0 left-0 right-0 z-10">
             <form onSubmit={handleSendMessage} className="flex space-x-4">
               <input
                 type="text"
