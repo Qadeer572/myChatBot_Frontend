@@ -59,7 +59,8 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message: inputMessage}),
+        body: JSON.stringify({ email: user_email, message: inputMessage })
+
       });
 
       const data = await response.json();
@@ -73,6 +74,25 @@ export default function Home() {
       setMessages((prev) => [...prev, botResponse]);
     } catch (error) {
       console.error("Error fetching bot response:", error);
+    }
+
+    try {
+      const response = await fetch("http://127.0.0.1:8000/chat/history", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: user_email})
+
+      });
+
+      const data = await response.json();
+
+       
+      const history= data.history;
+      console.log(history);
+    } catch (error) {
+      console.error("Error fetching History:", error);
     }
 
     setIsTyping(false);
