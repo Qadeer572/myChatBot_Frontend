@@ -22,36 +22,12 @@ export default function Home() {
     },
   ]);
   const [user_email, setuserEmail] = useState<any[]>([]);
-  const [historyLoaded, setHistoryLoaded] = useState(false);
   const [history, setHistory] = useState<string[]>([]);
 
   useEffect(() => {
     const user_Email = localStorage.getItem("user_email");
     if (user_Email) setuserEmail(JSON.parse(user_Email));
-
-    // Fetch initial history
-    const fetchHistory = async () => {
-      try {
-        const response = await fetch("http://127.0.0.1:8000/chat/history/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email: user_Email }),
-        });
-
-        const data = await response.json();
-        setHistory(data.history || []);
-        setHistoryLoaded(true);
-      } catch (error) {
-        console.error("Error fetching initial history:", error);
-      }
-    };
-
-    if (!historyLoaded && user_Email) {
-      fetchHistory();
-    }
-  }, [historyLoaded, user_email]);
+  }, []);
 
   const [inputMessage, setInputMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
