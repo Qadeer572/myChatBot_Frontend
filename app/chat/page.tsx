@@ -95,7 +95,14 @@ export default function Home() {
 
       const historyData = await historyResponse.json();
       const history = historyData.history;
-      console.log(history);
+      const historyMessages = history.map((msg: string, index: number) => ({
+        id: index + 1,
+        text: msg,
+        isBot: false, // Assuming history messages are not from the bot
+      }));
+
+      setHistoryMessages(historyMessages);
+
     } catch (error) {
       console.error("Error:", error);
     }
@@ -111,32 +118,29 @@ export default function Home() {
       <div className="flex min-h-screen bg-gray-900 text-white">
         <div className={`w-80 bg-gray-800 p-6 flex flex-col h-screen border-r border-gray-700 fixed transition-transform duration-300 ${isSidebarVisible ? "translate-x-0" : "-translate-x-full"}`}>
           <div className="flex items-center space-x-3 mb-6">
+            <button onClick={() => setIsSidebarVisible(!isSidebarVisible)}>
+              <Menu className="w-8 h-8 text-primary" />
+            </button>
             <Bot className="w-8 h-8 text-primary" />
             <h2 className="text-xl font-bold">Chat History</h2>
           </div>
 
           <ScrollArea className="flex-1 -mx-2">
             <div className="space-y-2 pr-4">
-               
+              {historyMessages.map((message) => (
+                <div
+                  key={message.id}
+                  className="p-4 rounded-lg bg-gray-700 text-white"
+                >
+                  <p className="text-sm leading-relaxed">{message.text}</p>
+                </div>
+              ))}
             </div>
           </ScrollArea>
         </div>
 
-        <div className={`flex-1 flex flex-col transition-all duration-300 ${isSidebarVisible ? "ml-80" : "ml-auto mr-auto max-w-4xl"}`}>
-          <div className="p-6 bg-gray-700 text-gray-100 fixed top-0 left-0 right-0 z-10 flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <button onClick={() => setIsSidebarVisible(!isSidebarVisible)}>
-                <Menu className="w-8 h-8 text-white" />
-              </button>
-              <Bot className="w-8 h-8 text-white" />
-              <div>
-                <h1 className="text-2xl font-bold">AI Assistant</h1>
-                <p className="text-sm opacity-80">Online | Ready to help</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex-1 p-6 overflow-y-auto bg-gray-800 mt-20" style={{ minHeight: "500px" }}>
+        <div className={`flex-1 flex flex-col transition-all duration-300 ${isSidebarVisible ? "ml-80" : "mx-auto max-w-4xl"}`}>
+          <div className="flex-1 p-6 overflow-y-auto bg-gray-800 mt-10" style={{ paddingBottom: "100px" }}>
             <div className="space-y-6">
               <AnimatePresence>
                 {messages.map((message) => (
@@ -191,7 +195,7 @@ export default function Home() {
             <div ref={messagesEndRef} />
           </div>
 
-          <div className={`p-4 bg-gray-800 border-t border-gray-700 fixed bottom-0 left-0 right-0 z-10 transition-all duration-300 ${isSidebarVisible ? "ml-80" : "ml-auto mr-auto max-w-4xl"}`}>
+          <div className={`p-4 bg-gray-800 border-t border-gray-700 fixed bottom-0 left-0 right-0 z-10 transition-all duration-300 ${isSidebarVisible ? "ml-80" : "mx-auto max-w-4xl"}`}>
             <form onSubmit={handleSendMessage} className="flex space-x-4">
               <input
                 type="text"
