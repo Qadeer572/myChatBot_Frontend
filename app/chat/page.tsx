@@ -22,10 +22,39 @@ export default function Home() {
     },
   ]);
   const [user_email, setuserEmail] = useState<any[]>([]);
+  const [historyLoaded, setHistoryLoaded] = useState(false);
 
   useEffect(() => {
     const user_Email = localStorage.getItem("user_email");
     if (user_Email) setuserEmail(JSON.parse(user_Email));
+
+    // Fetch chat history once when the component mounts
+    const fetchHistory = async () => {
+      try {
+        const response = await fetch("http://127.0.0.1:8000/chat/history/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email: user_Email }),
+        });
+
+        const data = await response.json();
+        const history = data.history;
+        const historyMessages = history.map((msg: string, index: number) => ({
+          id: index + 1,
+          text: msg,
+          isBot: false,
+        }));
+
+        setMessages((prev) => [...prev, ...historyMessages]);
+        setHistoryLoaded(true);
+      } catch (error) {
+        console.error("Error fetching History:", error);
+      }
+    };
+
+    fetchHistory();
   }, []);
 
   const [inputMessage, setInputMessage] = useState("");
@@ -73,29 +102,6 @@ export default function Home() {
       setMessages((prev) => [...prev, botResponse]);
     } catch (error) {
       console.error("Error fetching bot response:", error);
-    }
-
-    try {
-      const response = await fetch("http://127.0.0.1:8000/chat/history/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email: user_email }),
-      });
-
-      const data = await response.json();
-      const history = data.history;
-
-      const historyMessages = history.map((msg: string, index: number) => ({
-        id: index + 1,
-        text: msg,
-        isBot: false,
-      }));
-
-      setMessages((prev) => [...historyMessages, ...prev]);
-    } catch (error) {
-      console.error("Error fetching History:", error);
     }
 
     setIsTyping(false);
