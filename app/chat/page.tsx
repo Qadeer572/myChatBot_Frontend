@@ -34,35 +34,11 @@ export default function Home() {
     if (storedEmail) {
       setUserEmail(JSON.parse(storedEmail));
     }
-
-    if (storedEmail) {
-      // Fetch chat history once when the component mounts
-      const fetchHistory = async () => {
-        try {
-          const response = await fetch("http://127.0.0.1:8000/chat/history/", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ email: JSON.parse(storedEmail) }),
-          });
-
-          const data = await response.json();
-          const history = data.history;
-          const historyMessages = history.map((msg: string, index: number) => ({
-            id: index + 1,
-            text: msg,
-          }));
-
-          setHistoryMessages(historyMessages);
-        } catch (error) {
-          console.error("Error fetching history:", error);
-        }
-      };
-
-      fetchHistory();
-    }
   }, []);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const [inputMessage, setInputMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -71,10 +47,6 @@ export default function Home() {
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -99,6 +71,10 @@ export default function Home() {
         body: JSON.stringify({ email: user_email, message: inputMessage }),
       });
 
+      if (!response.ok) {
+        throw new Error(`Error fetching bot response: ${response.statusText}`);
+      }
+
       const data = await response.json();
 
       const botResponse: Message = {
@@ -107,8 +83,31 @@ export default function Home() {
         isBot: true,
       };
       setMessages((prev) => [...prev, botResponse]);
+
+      // Fetch history and update sidebar
+      const historyResponse = await fetch("http://127.0.0.1:8000/chat/history/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: user_email }),
+      });
+
+      if (!historyResponse.ok) {
+        throw new Error(`Error fetching history: ${historyResponse.statusText}`);
+      }
+
+      const historyData = await historyResponse.json();
+      const history = historyData.history;
+      const historyMessages = history.map((msg: string, index: number) => ({
+        id: index + 1,
+        text: msg,
+      }));
+
+      setHistoryMessages(historyMessages);
+
     } catch (error) {
-      console.error("Error fetching bot response:", error);
+      console.error("Error:", error);
     }
 
     setIsTyping(false);
