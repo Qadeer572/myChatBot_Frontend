@@ -13,11 +13,6 @@ interface Message {
   isBot: boolean;
 }
 
-interface HistoryMessage {
-  id: number;
-  text: string;
-}
-
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -27,7 +22,7 @@ export default function Home() {
     },
   ]);
   const [user_email, setUserEmail] = useState<string | null>(null);
-  const [historyMessages, setHistoryMessages] = useState<HistoryMessage[]>([]);
+  const [historyMessages, setHistoryMessages] = useState<Message[]>([]);
 
   useEffect(() => {
     const storedEmail = localStorage.getItem("user_email");
@@ -102,6 +97,7 @@ export default function Home() {
       const historyMessages = history.map((msg: string, index: number) => ({
         id: index + 1,
         text: msg,
+        isBot: false, // Assuming history messages are not from the bot
       }));
 
       setHistoryMessages(historyMessages);
