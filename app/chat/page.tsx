@@ -26,12 +26,14 @@ export default function Home() {
       isBot: true,
     },
   ]);
-  const [user_email, setUserEmail] = useState<any[]>([]);
+  const [user_email, setUserEmail] = useState<string | null>(null);
   const [historyMessages, setHistoryMessages] = useState<HistoryMessage[]>([]);
 
   useEffect(() => {
-    const user_Email = localStorage.getItem("user_email");
-    if (user_Email) setUserEmail(JSON.parse(user_Email));
+    const storedEmail = localStorage.getItem("user_email");
+    if (storedEmail) {
+      setUserEmail(JSON.parse(storedEmail));
+    }
   }, []);
 
   const [inputMessage, setInputMessage] = useState("");
@@ -47,6 +49,8 @@ export default function Home() {
   }, [messages]);
 
   const fetchHistory = async () => {
+    if (!user_email) return;
+
     try {
       const response = await fetch("http://127.0.0.1:8000/chat/history/", {
         method: "POST",
@@ -55,6 +59,10 @@ export default function Home() {
         },
         body: JSON.stringify({ email: user_email }),
       });
+
+      if (!response.ok) {
+        throw new Error(`Error fetching history: ${response.statusText}`);
+      }
 
       const data = await response.json();
       const history = data.history;
@@ -75,7 +83,7 @@ export default function Home() {
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!inputMessage.trim()) return;
+    if (!inputMessage.trim() || !user_email) return;
 
     const newMessage: Message = {
       id: messages.length + 1,
@@ -95,6 +103,10 @@ export default function Home() {
         },
         body: JSON.stringify({ email: user_email, message: inputMessage }),
       });
+
+      if (!response.ok) {
+        throw new Error(`Error fetching bot response: ${response.statusText}`);
+      }
 
       const data = await response.json();
 
