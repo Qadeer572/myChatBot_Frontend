@@ -95,14 +95,7 @@ export default function Home() {
 
       const historyData = await historyResponse.json();
       const history = historyData.history;
-      const historyMessages = history.map((msg: string, index: number) => ({
-        id: index + 1,
-        text: msg,
-        isBot: false, // Assuming history messages are not from the bot
-      }));
-
-      setHistoryMessages(historyMessages);
-
+      console.log(history);
     } catch (error) {
       console.error("Error:", error);
     }
@@ -124,14 +117,7 @@ export default function Home() {
 
           <ScrollArea className="flex-1 -mx-2">
             <div className="space-y-2 pr-4">
-              {historyMessages.map((message) => (
-                <div
-                  key={message.id}
-                  className="p-4 rounded-lg bg-gray-700 text-white"
-                >
-                  <p className="text-sm leading-relaxed">{message.text}</p>
-                </div>
-              ))}
+               
             </div>
           </ScrollArea>
         </div>
