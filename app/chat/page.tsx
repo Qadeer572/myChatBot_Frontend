@@ -205,7 +205,7 @@ export default function Home() {
             <div ref={messagesEndRef} />
           </div>
 
-          <div className="p-4 bg-gray-800 border-t border-gray-700 fixed bottom-0 left-0 right-0 z-10">
+          <div className={`p-4 bg-gray-800 border-t border-gray-700 fixed bottom-0 left-0 right-0 z-10 transition-all duration-300 ${isSidebarVisible ? "ml-80" : "ml-auto mr-auto max-w-4xl"}`}>
             <form onSubmit={handleSendMessage} className="flex space-x-4">
               <input
                 type="text"
