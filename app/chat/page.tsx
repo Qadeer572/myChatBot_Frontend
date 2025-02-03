@@ -108,27 +108,8 @@ export default function Home() {
         <title>AI Assistant - ChatLink</title>
       </Head>
       <div className="flex min-h-screen bg-gray-900 text-white p-4 md:p-6 relative">
-        {/* Sidebar */}
-        <div className="w-64 bg-gray-800 p-6 rounded-2xl shadow-2xl border border-gray-700">
-          <div className="flex flex-col space-y-4">
-            <h2 className="text-xl font-semibold">Chat History</h2>
-            <div className="space-y-2 max-h-[calc(100vh-200px)] overflow-y-auto">
-              {messages.filter((message) => message.isBot).map((message) => (
-                <div key={message.id} className="flex items-start space-x-2 max-w-[80%]">
-                  <div className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center">
-                    <Bot className="w-5 h-5 text-white" />
-                  </div>
-                  <div className="p-4 rounded-2xl bg-gray-700 text-white shadow-sm">
-                    <ReactMarkdown className="text-sm leading-relaxed">{message.text}</ReactMarkdown>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Main Chat Area */}
-        <div className="flex flex-col w-full max-w-4xl mx-auto bg-gray-800 rounded-2xl shadow-2xl overflow-hidden border border-gray-700 relative pb-20 ml-72">
+        <div className="flex flex-col w-full max-w-4xl mx-auto bg-gray-800 rounded-2xl shadow-2xl overflow-hidden border border-gray-700 relative pb-20">
+          {/* Chat Header */}
           <div className="p-6 bg-gray-700 text-gray-100">
             <div className="flex items-center space-x-3">
               <Bot className="w-8 h-8 text-white" />
@@ -139,10 +120,22 @@ export default function Home() {
             </div>
           </div>
 
+          {/* Sidebar for message history */}
+          <div className="absolute top-0 left-0 bottom-0 w-1/4 bg-gray-700 p-4 overflow-y-auto">
+            <h2 className="text-xl font-bold text-white">Message History</h2>
+            <div className="space-y-4 mt-4">
+              {messages.filter((message) => message.isBot).map((message) => (
+                <div key={message.id} className="bg-gray-600 p-3 rounded-lg text-white">
+                  <ReactMarkdown>{message.text}</ReactMarkdown>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* Chat Messages */}
           <div className="flex-1 p-6 overflow-y-auto bg-gray-800" style={{ minHeight: "500px" }}>
             <div className="space-y-6">
-              {/* New Messages on Right */}
+              {/* User Messages on Right */}
               <AnimatePresence>
                 {messages.filter((message) => !message.isBot).map((message) => (
                   <motion.div
@@ -155,11 +148,7 @@ export default function Home() {
                   >
                     <div className="flex items-start space-x-2 max-w-[80%]">
                       <div
-                        className={`p-4 rounded-2xl ${
-                          message.isBot
-                            ? "bg-gray-700 text-white"
-                            : "bg-primary text-primary-foreground"
-                        } shadow-sm`}
+                        className={`p-4 rounded-2xl ${message.isBot ? "bg-gray-700 text-white" : "bg-primary text-primary-foreground"} shadow-sm`}
                       >
                         <ReactMarkdown className="text-sm leading-relaxed">{message.text}</ReactMarkdown>
                       </div>
