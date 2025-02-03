@@ -13,6 +13,12 @@ interface Message {
   isBot: boolean;
 }
 
+interface ChatHistory {
+  id: number;
+  text: string;
+  timestamp: Date;
+}
+
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -23,12 +29,13 @@ export default function Home() {
   ]);
   const [user_email, setuserEmail] = useState<any[]>([]);
   const [historyLoaded, setHistoryLoaded] = useState(false);
+  const [chatHistory, setChatHistory] = useState<ChatHistory[]>([]);
 
   useEffect(() => {
     const user_Email = localStorage.getItem("user_email");
     if (user_Email) setuserEmail(JSON.parse(user_Email));
 
-    // Fetch chat history once when the component mounts
+    // Fetch chat history when component mounts
     const fetchHistory = async () => {
       try {
         const response = await fetch("http://127.0.0.1:8000/chat/history/", {
@@ -41,21 +48,24 @@ export default function Home() {
 
         const data = await response.json();
         const history = data.history;
-        const historyMessages = history.map((msg: string, index: number) => ({
+
+        const historyItems = history.map((msg: string, index: number) => ({
           id: index + 1,
           text: msg,
-          isBot: false,
+          timestamp: new Date(),
         }));
 
-        setMessages((prev) => [...prev, ...historyMessages]);
+        setChatHistory(historyItems);
         setHistoryLoaded(true);
       } catch (error) {
-        console.error("Error fetching History:", error);
+        console.error("Error fetching initial history:", error);
       }
     };
 
-    fetchHistory();
-  }, []);
+    if (!historyLoaded && user_Email) {
+      fetchHistory();
+    }
+  }, [historyLoaded, user_email]);
 
   const [inputMessage, setInputMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -100,26 +110,40 @@ export default function Home() {
         isBot: true,
       };
       setMessages((prev) => [...prev, botResponse]);
+
+      // Add to history
+      setChatHistory(prev => [...prev, {
+        id: prev.length + 1,
+        text: inputMessage,
+        timestamp: new Date()
+      }]);
     } catch (error) {
       console.error("Error fetching bot response:", error);
     }
+
     try {
       const response = await fetch("http://127.0.0.1:8000/chat/history/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email: user_email}),
+        body: JSON.stringify({ email: user_email }),
       });
 
       const data = await response.json();
-      const history=data.history;
-      console.log(history);
-       
+      const history = data.history;
+
+      const historyMessages = history.map((msg: string, index: number) => ({
+        id: index + 1,
+        text: msg,
+        timestamp: new Date()
+      }));
+
+      setChatHistory(historyMessages);
     } catch (error) {
       console.error("Error fetching History:", error);
     }
- 
+
     setIsTyping(false);
   };
 
@@ -129,7 +153,7 @@ export default function Home() {
         <title>AI Assistant - ChatLink</title>
       </Head>
       <div className="flex min-h-screen bg-gray-900 text-white">
-        {/* Empty Sidebar */}
+        {/* Sidebar with History */}
         <div className="w-80 bg-gray-800 p-6 flex flex-col h-screen border-r border-gray-700 fixed">
           <div className="flex items-center space-x-3 mb-6">
             <Bot className="w-8 h-8 text-primary" />
@@ -138,7 +162,17 @@ export default function Home() {
           
           <ScrollArea className="flex-1 -mx-2">
             <div className="space-y-2 pr-4">
-                
+              {chatHistory.map((historyItem) => (
+                <div
+                  key={historyItem.id}
+                  className="p-4 rounded-lg bg-gray-700/50 hover:bg-gray-700 transition-colors duration-200"
+                >
+                  <p className="text-sm text-gray-300 mb-1">
+                    {new Date(historyItem.timestamp).toLocaleString()}
+                  </p>
+                  <p className="text-sm line-clamp-2">{historyItem.text}</p>
+                </div>
+              ))}
             </div>
           </ScrollArea>
         </div>
