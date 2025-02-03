@@ -20,7 +20,14 @@ export default function Home() {
       isBot: true,
     },
   ]);
+  const [user_email, setuserEmail] = useState<any[]>([]);
+  useEffect(() => {
+    const user_Email = localStorage.getItem("user_email");
+    if (user_Email) setuserEmail(JSON.parse(user_Email));
+}, []);
+
   const [inputMessage, setInputMessage] = useState("");
+   
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -52,7 +59,7 @@ export default function Home() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message: inputMessage }),
+        body: JSON.stringify({ message: inputMessage}),
       });
 
       const data = await response.json();
@@ -62,7 +69,7 @@ export default function Home() {
         text: data.chatResponse || "I couldn't process your request.",
         isBot: true,
       };
-
+      console.log(user_email)
       setMessages((prev) => [...prev, botResponse]);
     } catch (error) {
       console.error("Error fetching bot response:", error);

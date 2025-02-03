@@ -52,6 +52,7 @@ export default function LoginPage() {
       if (response.ok) {
         // Only navigate if the registration was successful
         console.log("Login successful:", data);
+        localStorage.setItem("user_email", JSON.stringify(data.email));
         handleNavigation();
       } else {
         console.error("Registration failed:", data);
