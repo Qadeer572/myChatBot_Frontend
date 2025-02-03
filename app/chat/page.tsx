@@ -129,7 +129,7 @@ export default function Home() {
       </Head>
       <div className="flex min-h-screen bg-gray-900 text-white">
         {/* Enhanced Sidebar */}
-        <div className="w-80 bg-gray-800 p-6 flex flex-col h-screen border-r border-gray-700">
+        <div className="w-80 bg-gray-800 p-6 flex flex-col h-screen border-r border-gray-700 fixed">
           <div className="flex items-center space-x-3 mb-6">
             <Bot className="w-8 h-8 text-primary" />
             <h2 className="text-xl font-bold">Chat History</h2>
@@ -156,7 +156,7 @@ export default function Home() {
         </div>
 
         {/* Main Chat Area */}
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col ml-80">
           <div className="p-6 bg-gray-700 text-gray-100">
             <div className="flex items-center space-x-3">
               <Bot className="w-8 h-8 text-white" />
