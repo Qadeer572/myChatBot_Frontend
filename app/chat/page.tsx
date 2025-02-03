@@ -6,8 +6,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import Head from "next/head";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 
 interface Message {
   id: number;
@@ -15,10 +13,10 @@ interface Message {
   isBot: boolean;
 }
 
-interface ChatHistory {
+interface ChatSession {
   id: string;
-  title: string;
   timestamp: Date;
+  preview: string;
 }
 
 export default function Home() {
@@ -29,20 +27,18 @@ export default function Home() {
       isBot: true,
     },
   ]);
-  const [user_email, setUserEmail] = useState<any[]>([]);
-  const [inputMessage, setInputMessage] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [chatHistory, setChatHistory] = useState<ChatHistory[]>([
-    { id: "1", title: "Previous Chat 1", timestamp: new Date() },
-    { id: "2", title: "Previous Chat 2", timestamp: new Date() },
-  ]);
-  const [activeChatId, setActiveChatId] = useState<string | null>(null);
+  const [user_email, setuserEmail] = useState<any[]>([]);
+  const [chatSessions, setChatSessions] = useState<ChatSession[]>([]);
+  const [activeSession, setActiveSession] = useState<string | null>(null);
 
   useEffect(() => {
     const user_Email = localStorage.getItem("user_email");
-    if (user_Email) setUserEmail(JSON.parse(user_Email));
+    if (user_Email) setuserEmail(JSON.parse(user_Email));
   }, []);
+
+  const [inputMessage, setInputMessage] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -50,6 +46,19 @@ export default function Home() {
 
   useEffect(() => {
     scrollToBottom();
+  }, [messages]);
+
+  // Update chat sessions when messages change
+  useEffect(() => {
+    const botMessages = messages.filter(m => m.isBot);
+    if (botMessages.length > 0) {
+      const newSessions = botMessages.map(msg => ({
+        id: msg.id.toString(),
+        timestamp: new Date(),
+        preview: msg.text.substring(0, 50) + (msg.text.length > 50 ? "..." : "")
+      }));
+      setChatSessions(newSessions);
+    }
   }, [messages]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
@@ -88,7 +97,7 @@ export default function Home() {
     }
 
     try {
-      const historyResponse = await fetch("http://127.0.0.1:8000/chat/history/", {
+      const response = await fetch("http://127.0.0.1:8000/chat/history/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -96,7 +105,7 @@ export default function Home() {
         body: JSON.stringify({ email: user_email }),
       });
 
-      const data = await historyResponse.json();
+      const data = await response.json();
       const history = data.history;
 
       const historyMessages = history.map((msg: string, index: number) => ({
@@ -105,9 +114,9 @@ export default function Home() {
         isBot: false,
       }));
 
-      setMessages((prev) => [...historyMessages, ...prev]); // Display history first
+      setMessages((prev) => [...historyMessages, ...prev]);
     } catch (error) {
-      console.error("Error fetching history:", error);
+      console.error("Error fetching History:", error);
     }
 
     setIsTyping(false);
@@ -118,9 +127,36 @@ export default function Home() {
       <Head>
         <title>AI Assistant - ChatLink</title>
       </Head>
-      <div className="flex min-h-screen bg-gray-900 text-white p-4 md:p-6 relative">
-        <div className="flex flex-col w-full max-w-4xl mx-auto bg-gray-800 rounded-2xl shadow-2xl overflow-hidden border border-gray-700 relative pb-20">
-          {/* Chat Header */}
+      <div className="flex min-h-screen bg-gray-900 text-white">
+        {/* Enhanced Sidebar */}
+        <div className="w-80 bg-gray-800 p-6 flex flex-col h-screen border-r border-gray-700">
+          <div className="flex items-center space-x-3 mb-6">
+            <Bot className="w-8 h-8 text-primary" />
+            <h2 className="text-xl font-bold">Chat History</h2>
+          </div>
+          
+          <ScrollArea className="flex-1 -mx-2">
+            <div className="space-y-2 pr-4">
+              {chatSessions.map((session) => (
+                <button
+                  key={session.id}
+                  onClick={() => setActiveSession(session.id)}
+                  className={`w-full text-left p-4 rounded-lg transition-all duration-200 hover:bg-gray-700 ${
+                    activeSession === session.id ? 'bg-gray-700 ring-2 ring-primary' : ''
+                  }`}
+                >
+                  <p className="font-medium text-sm text-gray-300">
+                    {new Date(session.timestamp).toLocaleString()}
+                  </p>
+                  <p className="text-sm mt-1 line-clamp-2">{session.preview}</p>
+                </button>
+              ))}
+            </div>
+          </ScrollArea>
+        </div>
+
+        {/* Main Chat Area */}
+        <div className="flex-1 flex flex-col">
           <div className="p-6 bg-gray-700 text-gray-100">
             <div className="flex items-center space-x-3">
               <Bot className="w-8 h-8 text-white" />
@@ -128,27 +164,6 @@ export default function Home() {
                 <h1 className="text-2xl font-bold">AI Assistant</h1>
                 <p className="text-sm opacity-80">Online | Ready to help</p>
               </div>
-            </div>
-          </div>
-
-          {/* Sidebar for message history */}
-          <div className="absolute top-0 left-0 bottom-0 w-1/4 bg-gray-700 p-4 overflow-y-auto">
-            <h2 className="text-xl font-bold text-white">Message History</h2>
-            <div className="space-y-4 mt-4">
-              {chatHistory.map((chat) => (
-                <button
-                  key={chat.id}
-                  onClick={() => setActiveChatId(chat.id)}
-                  className={`w-full text-left p-3 rounded-lg mb-2 hover:bg-accent transition-colors ${
-                    activeChatId === chat.id ? 'bg-accent' : ''
-                  }`}
-                >
-                  <p className="font-medium truncate">{chat.title}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {chat.timestamp.toLocaleDateString()}
-                  </p>
-                </button>
-              ))}
             </div>
           </div>
 
@@ -165,8 +180,26 @@ export default function Home() {
                     transition={{ duration: 0.3 }}
                     className={`flex ${message.isBot ? 'justify-start' : 'justify-end'}`}
                   >
-                    <div className={`max-w-[70%] rounded-lg p-3 ${message.isBot ? 'bg-gray-700' : 'bg-primary'} text-white`}>
-                      <ReactMarkdown>{message.text}</ReactMarkdown>
+                    <div className="flex items-start space-x-2 max-w-[80%]">
+                      {message.isBot && (
+                        <div className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center flex-shrink-0">
+                          <Bot className="w-5 h-5 text-white" />
+                        </div>
+                      )}
+                      <div
+                        className={`p-4 rounded-2xl ${
+                          message.isBot
+                            ? 'bg-gray-700 text-white'
+                            : 'bg-primary text-primary-foreground'
+                        } shadow-sm`}
+                      >
+                        <ReactMarkdown className="text-sm leading-relaxed">{message.text}</ReactMarkdown>
+                      </div>
+                      {!message.isBot && (
+                        <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                          <User className="w-5 h-5 text-primary-foreground" />
+                        </div>
+                      )}
                     </div>
                   </motion.div>
                 ))}
@@ -190,25 +223,25 @@ export default function Home() {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Message Input (Fixed at Bottom) */}
-          <form onSubmit={handleSendMessage} className="fixed bottom-0 left-0 w-full p-4 bg-gray-800 border-t border-gray-700">
-            <div className="flex justify-center">
-              <Input
+          {/* Message Input */}
+          <div className="p-4 bg-gray-800 border-t border-gray-700">
+            <form onSubmit={handleSendMessage} className="flex space-x-4">
+              <input
                 type="text"
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 placeholder="Type your message..."
-                className="w-full max-w-4xl p-4 border border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 bg-gray-700 text-white"
+                className="flex-1 p-4 border border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 bg-gray-700 text-white"
               />
-              <Button
+              <button
                 type="submit"
                 className="px-6 bg-primary text-primary-foreground rounded-xl hover:opacity-90 transition-all duration-200 flex items-center justify-center space-x-2 hover:shadow-lg active:scale-95"
                 disabled={!inputMessage.trim()}
               >
                 <Send className="w-5 h-5" />
-              </Button>
-            </div>
-          </form>
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
