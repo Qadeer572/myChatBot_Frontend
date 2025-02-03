@@ -65,7 +65,7 @@ export default function Home() {
 
       setHistoryMessages(historyMessages);
     } catch (error) {
-      console.error("Error fetching History:", error);
+      console.error("Error fetching history:", error);
     }
   };
 
@@ -107,8 +107,6 @@ export default function Home() {
     } catch (error) {
       console.error("Error fetching bot response:", error);
     }
-
-    await fetchHistory();
 
     setIsTyping(false);
   };
