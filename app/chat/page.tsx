@@ -100,7 +100,7 @@ export default function Home() {
         text: msg,
         isBot: false, // Assuming history messages are not from the bot
       }));
-
+      print(historyMessages)
       setHistoryMessages(historyMessages);
 
     } catch (error) {
