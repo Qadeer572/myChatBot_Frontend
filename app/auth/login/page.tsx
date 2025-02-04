@@ -55,9 +55,11 @@ export default function LoginPage() {
         localStorage.setItem("user_email", JSON.stringify(data.email));
         handleNavigation();
       } else {
+        alert("Failed to login");
         console.error("Registration failed:", data);
       }
     } catch (error) {
+      alert("Failed to login");
       console.error("Registration failed:", error);
     }
   }
