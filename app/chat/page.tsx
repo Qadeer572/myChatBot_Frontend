@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import Head from "next/head";
 import { ScrollArea } from "@/components/ui/scroll-area";
-const historyMessages:Message = new Message();
+ 
 interface Message {
   id: number;
   text: string;
