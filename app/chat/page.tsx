@@ -24,6 +24,7 @@ export default function Home() {
   const [user_email, setUserEmail] = useState<string | null>(null);
   const [historyMessages, setHistoryMessages] = useState<Message[]>([]);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
+  var history =[""];
 
   useEffect(() => {
     const storedEmail = localStorage.getItem("user_email");
@@ -94,7 +95,7 @@ export default function Home() {
       }
 
       const historyData = await historyResponse.json();
-      const history = historyData.history;
+      history = historyData.history;
 
       // Prepare history messages for display
       const historyMessages = history.map((msg: string, index: number) => ({
@@ -129,7 +130,7 @@ export default function Home() {
           <ScrollArea className="flex-1 -mx-2">
             <div className="space-y-2 pr-4">
             <ul>
-            {names.map((name, index) => (
+            {history.map((name, index) => (
           <li key={index}>{name}</li>
             ))}
           </ul>
