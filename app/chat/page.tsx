@@ -96,6 +96,7 @@ export default function Home() {
 
       const historyData = await historyResponse.json();
       history = historyData.history;
+      console.log(history);
 
       // Prepare history messages for display
       const historyMessages = history.map((msg: string, index: number) => ({
