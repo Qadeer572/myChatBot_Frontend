@@ -99,11 +99,7 @@ export default function Home() {
       console.log(history);
 
       // Prepare history messages for display
-      const historyMessages = history.map((msg: string, index: number) => ({
-        id: index + 1,
-        text: msg,
-        isBot: true, // Assuming history messages are from the bot
-      }));
+       
 
       setHistoryMessages(historyMessages);
     } catch (error) {
