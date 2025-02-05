@@ -132,7 +132,7 @@ export default function Home() {
             <div className="space-y-2 pr-4">
             <ul>
             {history.map((name, index) => (
-          <li key={index}>{name}</li>
+          <li key={index}>hello world {name}</li>
             ))}
           </ul>
             </div>
