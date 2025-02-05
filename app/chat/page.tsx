@@ -132,7 +132,11 @@ export default function Home() {
 
           <ScrollArea className="flex-1 -mx-2">
             <div className="space-y-2 pr-4">
-          
+            {historyMessages.map((msg) => (
+  <div key={msg.id} className="p-3 bg-gray-700 rounded-lg text-white">
+    {msg.isBot ? msg.text : msg.text} {/* Just display msg.text */}
+  </div>
+))}
             </div>
           </ScrollArea>
         </div>
