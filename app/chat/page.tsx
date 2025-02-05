@@ -105,6 +105,7 @@ export default function Home() {
       }));
 
       console.log(historyMessages);
+      console.log(history.bot);
       setHistoryMessages(historyMessages);
 
     } catch (error) {
@@ -131,11 +132,7 @@ export default function Home() {
 
           <ScrollArea className="flex-1 -mx-2">
             <div className="space-y-2 pr-4">
-            {historyMessages.map((msg) => (
-      <div key={msg.id} className="p-3 bg-gray-700 rounded-lg text-white">
-        {msg.text}
-      </div>
-    ))}
+          
             </div>
           </ScrollArea>
         </div>
