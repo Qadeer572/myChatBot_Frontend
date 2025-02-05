@@ -97,7 +97,6 @@ export default function Home() {
       const historyData = await historyResponse.json();
       history = historyData.history;
       console.log(history);
-
       // Prepare history messages for display
        
 
@@ -125,14 +124,8 @@ export default function Home() {
           </div>
 
           <ScrollArea className="flex-1 -mx-2">
-            <div className="space-y-2 pr-4">
-            <ul>
-              
-            {history.map((name, index) => (
-          <li key={index}>{name}</li>
-            ))}
-            <div>lenght : {history.length}</div>
-          </ul>
+            <div className="space-y-2 pr-4" id="historyList">
+                <ul>hello</ul>
             </div>
           </ScrollArea>
         </div>
