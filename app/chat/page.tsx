@@ -24,7 +24,7 @@ export default function Home() {
   const [user_email, setUserEmail] = useState<string | null>(null);
   const [historyMessages, setHistoryMessages] = useState<Message[]>([]);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
-  var history =[""];
+  var history =["nice","hello","world"];
 
   useEffect(() => {
     const storedEmail = localStorage.getItem("user_email");
