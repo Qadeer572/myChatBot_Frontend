@@ -105,7 +105,7 @@ export default function Home() {
       }));
 
       console.log(historyMessages);
-      console.log(history.bot);
+      console.log(historyMessages.text);
       setHistoryMessages(historyMessages);
 
     } catch (error) {
