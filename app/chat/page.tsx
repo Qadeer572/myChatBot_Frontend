@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import Head from "next/head";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { matchesGlob } from "path/posix";
  
 interface Message {
   id: number;
@@ -24,6 +25,7 @@ export default function Home() {
   const [user_email, setUserEmail] = useState<string | null>(null);
   const [historyMessages, setHistoryMessages] = useState<Message[]>([]);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
+  var historyMsg=[];
 
   useEffect(() => {
     const storedEmail = localStorage.getItem("user_email");
@@ -95,6 +97,7 @@ export default function Home() {
 
       const historyData = await historyResponse.json();
       const history = historyData.history;
+      historyMsg=history.bot;
       const historyMessages = history.map((msg: string, index: number) => ({
         id: index + 1,
         text: msg,
@@ -128,7 +131,11 @@ export default function Home() {
 
           <ScrollArea className="flex-1 -mx-2">
             <div className="space-y-2 pr-4">
-               
+            {historyMessages.map((msg) => (
+      <div key={msg.id} className="p-3 bg-gray-700 rounded-lg text-white">
+        {msg.text}
+      </div>
+    ))}
             </div>
           </ScrollArea>
         </div>
