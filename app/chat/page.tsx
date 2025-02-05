@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import Head from "next/head";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useRouter } from "next/navigation"; // Change import from 'next/router' to 'next/navigation'
 
 interface Message {
   id: number;
@@ -14,6 +15,7 @@ interface Message {
 }
 var history = ["Qadeer","Muneeb","Ali"];
 export default function Home() {
+  
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
@@ -36,7 +38,18 @@ export default function Home() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+  const router = useRouter();
+  const handleNavigation = () => {
+    // Navigate to home page after successful registration
+    router.push('/auth/login/');
+  }
 
+  if (!user_email || user_email.length === 0) {
+    handleNavigation();
+  }
+
+
+  
   const [inputMessage, setInputMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
