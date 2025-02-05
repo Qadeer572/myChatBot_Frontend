@@ -131,7 +131,7 @@ export default function Home() {
           <ScrollArea className="flex-1 -mx-2">
             <div className="space-y-2 pr-4">
             <ul>
-              <div>{history.length}</div>
+              <div>lenght : {history.length}</div>
             {history.map((name, index) => (
           <li key={index}>hello world {name}</li>
             ))}
