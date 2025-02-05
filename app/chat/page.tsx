@@ -6,8 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import Head from "next/head";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { matchesGlob } from "path/posix";
- 
+
 interface Message {
   id: number;
   text: string;
@@ -25,7 +24,6 @@ export default function Home() {
   const [user_email, setUserEmail] = useState<string | null>(null);
   const [historyMessages, setHistoryMessages] = useState<Message[]>([]);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
-  var historyMsg=[];
 
   useEffect(() => {
     const storedEmail = localStorage.getItem("user_email");
@@ -97,17 +95,15 @@ export default function Home() {
 
       const historyData = await historyResponse.json();
       const history = historyData.history;
-      historyMsg=history.bot;
+
+      // Prepare history messages for display
       const historyMessages = history.map((msg: string, index: number) => ({
         id: index + 1,
         text: msg,
-        isBot: true, // Assuming history messages are not from the bot
+        isBot: true, // Assuming history messages are from the bot
       }));
 
-      console.log(historyMessages);
-      console.log(historyMessages.text);
       setHistoryMessages(historyMessages);
-
     } catch (error) {
       console.error("Error:", error);
     }
@@ -132,11 +128,11 @@ export default function Home() {
 
           <ScrollArea className="flex-1 -mx-2">
             <div className="space-y-2 pr-4">
-            {historyMessages.map((msg) => (
-  <div key={msg.id} className="p-3 bg-gray-700 rounded-lg text-white">
-    {msg.isBot ? msg.text : msg.text} {/* Just display msg.text */}
-  </div>
-))}
+              {historyMessages.map((msg) => (
+                <div key={msg.id} className="p-3 bg-gray-700 rounded-lg text-white">
+                  {msg.text} {/* Just display msg.text */}
+                </div>
+              ))}
             </div>
           </ScrollArea>
         </div>
@@ -216,13 +212,13 @@ export default function Home() {
                 type="text"
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
+                className="w-full p-3 rounded-lg bg-gray-700 text-white outline-none"
                 placeholder="Type your message..."
-                className="flex-1 p-4 border border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 bg-gray-700 text-white"
               />
               <button
                 type="submit"
-                className="px-6 bg-primary text-primary-foreground rounded-xl hover:opacity-90 transition-all duration-200 flex items-center justify-center space-x-2 hover:shadow-lg active:scale-95"
-                disabled={!inputMessage.trim()}
+                className="p-3 rounded-lg bg-primary text-white"
+                disabled={isTyping || !inputMessage.trim()}
               >
                 <Send className="w-5 h-5" />
               </button>
