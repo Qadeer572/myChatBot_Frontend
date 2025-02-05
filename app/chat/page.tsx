@@ -38,15 +38,7 @@ export default function Home() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
-  const router = useRouter();
-  const handleNavigation = () => {
-    // Navigate to home page after successful registration
-    router.push('/auth/login/');
-  }
-
-  if (!user_email || user_email.length === 0) {
-    handleNavigation();
-  }
+   
 
 
   
