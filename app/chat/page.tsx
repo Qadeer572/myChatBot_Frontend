@@ -24,7 +24,7 @@ export default function Home() {
   const [user_email, setUserEmail] = useState<string | null>(null);
   const [historyMessages, setHistoryMessages] = useState<Message[]>([]);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
-  var history =["nice","hello","world"];
+   
 
   useEffect(() => {
     const storedEmail = localStorage.getItem("user_email");
@@ -41,6 +41,7 @@ export default function Home() {
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const names = ['Alice', 'Bob', 'Charlie', 'David'];
+  var history = [""];
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -129,7 +130,7 @@ export default function Home() {
             <ul>
               
             {history.map((name, index) => (
-          <li key={index}>hello world {name}</li>
+          <li key={index}>{name}</li>
             ))}
             <div>lenght : {history.length}</div>
           </ul>
