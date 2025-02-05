@@ -95,7 +95,7 @@ export default function Home() {
       }
 
       const historyData = await historyResponse.json();
-      history = historyData.history.user;
+      history = historyData.history;
       console.log(history);
 
       // Prepare history messages for display
