@@ -12,7 +12,7 @@ interface Message {
   text: string;
   isBot: boolean;
 }
-
+var history = ["Qadeer","Muneeb","Ali"];
 export default function Home() {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -41,7 +41,6 @@ export default function Home() {
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const names = ['Alice', 'Bob', 'Charlie', 'David'];
-  var history = ["Qadeer","Muneeb","Ali"];
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
