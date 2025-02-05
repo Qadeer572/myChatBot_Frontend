@@ -41,7 +41,7 @@ export default function Home() {
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const names = ['Alice', 'Bob', 'Charlie', 'David'];
-  var history = [""];
+  var history = ["Qadeer","Muneeb","Ali"];
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
