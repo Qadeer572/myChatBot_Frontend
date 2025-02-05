@@ -101,7 +101,7 @@ export default function Home() {
       const historyMessages = history.map((msg: string, index: number) => ({
         id: index + 1,
         text: msg,
-        isBot: false, // Assuming history messages are not from the bot
+        isBot: true, // Assuming history messages are not from the bot
       }));
 
       console.log(historyMessages);
@@ -132,11 +132,10 @@ export default function Home() {
           <ScrollArea className="flex-1 -mx-2">
             <div className="space-y-2 pr-4">
             {historyMessages.map((msg) => (
-  <div key={msg.id} className="p-3 bg-gray-700 rounded-lg text-white">
-    {msg.isBot ? msg.text.bot : msg.text.user}
-  </div>
-))}
-
+      <div key={msg.id} className="p-3 bg-gray-700 rounded-lg text-white">
+        {msg.text}
+      </div>
+    ))}
             </div>
           </ScrollArea>
         </div>
