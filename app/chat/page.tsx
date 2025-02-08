@@ -157,8 +157,8 @@ export default function Index() {
                   key={index}
                   className="p-3 bg-gray-700/50 rounded-lg shadow-sm border border-gray-600/50 hover:border-gray-500/50 transition-colors"
                 >
-                  <p className="text-blue-400 font-medium text-sm">User: {item.user}</p>
-                  <p className="text-green-400 text-sm mt-1">Bot: {item.bot}</p>
+                  <p className="text-blue-400 font-medium text-sm">You: {item.user}</p>
+                  <p className="text-green-400 text-sm mt-1">ChatLink: {item.bot}</p>
                 </div>
               ))
             ) : (
