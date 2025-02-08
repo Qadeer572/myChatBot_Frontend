@@ -67,17 +67,10 @@ export default function Index() {
       }
 
       setHistoryMessages([]);
-      toast({
-        title: "History cleared",
-        description: "Your chat history has been cleared successfully.",
-      });
+       
     } catch (error) {
       console.error("Error clearing history:", error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to clear chat history. Please try again.",
-      });
+       
     }
   };
 
