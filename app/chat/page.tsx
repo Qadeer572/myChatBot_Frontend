@@ -126,11 +126,6 @@ export default function Index() {
       setHistoryMessages(historyData.history);
     } catch (error) {
       console.error("Error:", error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to send message. Please try again.",
-      });
     }
 
     setIsTyping(false);
