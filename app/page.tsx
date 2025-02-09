@@ -18,12 +18,18 @@ export default function Home() {
           Get started by creating an account or signing in to access your dashboard.
         </p>
         <div className="flex gap-4 justify-center">
-          <Button asChild size="lg">
-            <Link href="/auth/login">Sign In</Link>
+        <Button asChild variant="outline" size="lg" className="bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 text-white rounded-lg shadow-lg hover:from-purple-500 hover:via-pink-600 hover:to-red-600">
+              <Link href="/chat">Chat</Link>
           </Button>
+          
           <Button asChild variant="outline" size="lg">
             <Link href="/auth/signup">Create Account</Link>
           </Button>
+
+          <Button asChild size="lg">
+            <Link href="/auth/login">Sign In</Link>
+          </Button>
+          
         </div>
       </div>
     </div>

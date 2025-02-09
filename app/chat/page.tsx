@@ -7,7 +7,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 //import { useToast } from "@/components/ui/use-toast";
 
-interface Message {
+interface Message{
   id: number;
   text: string;
   isBot: boolean;
@@ -130,7 +130,26 @@ export default function Index() {
 
     setIsTyping(false);
   };
+  const deleteHistory = async () => {
+    try {
+      const deleteResponse = await fetch('http://127.0.0.1:8000/chat/delete_history/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: user_email }),
+      });
 
+      if (!deleteResponse.ok) {
+        throw new Error(`Error deleting history: ${deleteResponse.statusText}`);
+      }
+
+      setHistoryMessages([]);
+      alert('Chat history deleted successfully');
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
   return (
     <div className="flex min-h-screen bg-gray-900 text-white">
       {/* Sidebar */}
@@ -172,7 +191,7 @@ export default function Index() {
           <Button
             variant="destructive"
             className="w-full"
-            onClick={handleClearHistory}
+            onClick={deleteHistory}
             disabled={historyMessages.length === 0}
           >
             <Trash2 className="w-4 h-4 mr-2" />
