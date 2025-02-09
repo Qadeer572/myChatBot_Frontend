@@ -30,7 +30,7 @@ export default function Index() {
   ]);
   const [user_email, setUserEmail] = useState<string | null>(null);
   const [historyMessages, setHistoryMessages] = useState<HistoryMessage[]>([]);
-  const [isSidebarVisible, setIsSidebarVisible] = useState(true);
+  const [isSidebarVisible, setIsSidebarVisible] = useState(false);
   
 
   useEffect(() => {
