@@ -56,7 +56,7 @@ export default function Index() {
     try {
       if (!user_email) return;
       
-      const response = await fetch("http://127.0.0.1:8000/chat/clear-history/", {
+      const response = await fetch("https://mychatlinks-a65578949377.herokuapp.com/chat/clear-history/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -91,7 +91,7 @@ export default function Index() {
     setIsTyping(true);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/chat/", {
+      const response = await fetch("https://mychatlinks-a65578949377.herokuapp.com/chat/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -112,7 +112,7 @@ export default function Index() {
       };
       setMessages((prev) => [...prev, botResponse]);
 
-      const historyResponse = await fetch("http://127.0.0.1:8000/chat/history/", {
+      const historyResponse = await fetch("https://mychatlinks-a65578949377.herokuapp.com/chat/history/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -134,7 +134,7 @@ export default function Index() {
   };
   const deleteHistory = async () => {
     try {
-      const deleteResponse = await fetch('http://127.0.0.1:8000/chat/delete_history/', {
+      const deleteResponse = await fetch('https://mychatlinks-a65578949377.herokuapp.com/chat/delete_history/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -49,7 +49,7 @@ export default function SignUpPage() {
 
   async function registerUser(userData: z.infer<typeof formSchema>) {
     try {
-      const response = await fetch("http://127.0.0.1:8000/user/register/", {
+      const response = await fetch("https://mychatlinks-a65578949377.herokuapp.com/user/register/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
