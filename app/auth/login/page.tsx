@@ -39,7 +39,7 @@ export default function LoginPage() {
   const router = useRouter();
   async function loginUser(userData: z.infer<typeof formSchema>) {
     try {
-      const response = await fetch("https://myhelperchatbot-fad9f50d359b.herokuapp.com//user/login/", {
+      const response = await fetch("https://myhelperchatbot-fad9f50d359b.herokuapp.com/user/login/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
