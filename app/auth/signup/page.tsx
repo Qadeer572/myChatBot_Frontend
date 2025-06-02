@@ -49,7 +49,7 @@ export default function SignUpPage() {
 
   async function registerUser(userData: z.infer<typeof formSchema>) {
     try {
-      const response = await fetch("https://mychatlinks-a65578949377.herokuapp.com/user/register/", {
+      const response = await fetch("https://myhelperchatbot-fad9f50d359b.herokuapp.com//user/register/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -102,7 +102,7 @@ export default function SignUpPage() {
                 <FormItem>
                   <FormLabel>Full Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="John Doe" {...field} />
+                    <Input placeholder="full name" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
