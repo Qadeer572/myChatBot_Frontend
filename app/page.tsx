@@ -17,15 +17,6 @@ export default function Index() {
             asChild
             variant="outline"
             size="lg"
-            className="w-full sm:w-auto bg-gradient-to-r from-indigo-400 via-rose-400 to-amber-400 text-white hover:from-indigo-500 hover:via-rose-500 hover:to-amber-500 transition-all duration-300 ease-in-out shadow-md hover:shadow-lg"
-          >
-            <Link href="/chat">Chat</Link>
-          </Button>
-          
-          <Button
-            asChild
-            variant="outline"
-            size="lg"
             className="w-full sm:w-auto bg-white hover:bg-slate-50 transition-colors duration-300 shadow-md hover:shadow-lg"
           >
             <Link href="/auth/signup">Create Account</Link>
